@@ -1,6 +1,6 @@
 export default function NavBar({ cartCount = 0 }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-30 bg-[#6d6d6d]">
+    <header className="fixed inset-x-0 top-0 z-30 bg-white/30 backdrop-blur-sm">
       <nav className="flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:px-12">
         <a href="#hero" className="flex items-center gap-3">
           <img
