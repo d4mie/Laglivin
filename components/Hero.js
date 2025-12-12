@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-[#6d6d6d]"
+      className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-black"
     >
       <div className="absolute inset-0 opacity-25">
         <div className="absolute inset-0" aria-hidden>
