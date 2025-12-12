@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #0f172a;
+  background: #f8f8f7;
+}
+
+body {
+  @apply bg-[#6d6d6d] text-black antialiased;
+}
+
+a {
+  @apply text-inherit no-underline;
+}
+
+::selection {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.noise {
+  background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.04) 1px, transparent 0);
+  background-size: 16px 16px;
+}
+
+@keyframes watermark-sway {
+  0% {
+    transform: translateX(-40vw);
+  }
+  50% {
+    transform: translateX(75vw);
+  }
+  100% {
+    transform: translateX(-40vw);
+  }
+}
+
+.watermark-line {
+  animation-name: watermark-sway;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
+}
+
