@@ -1,3 +1,5 @@
+import Watermark from "./Watermark";
+
 export default function Footer() {
   return (
     <footer
@@ -5,8 +7,9 @@ export default function Footer() {
       className="bg-[#6d6d6d] text-white"
       role="contentinfo"
     >
-      <div className="border-b border-amber-400 bg-black text-white">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-14 md:grid-cols-5">
+      <div className="relative overflow-hidden border-b border-amber-400 bg-black text-white">
+        <Watermark />
+        <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-14 md:grid-cols-5">
           <div>
             <h4 className="font-semibold uppercase tracking-[0.16em]">
               Community
@@ -46,7 +49,8 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="bg-neutral-950 px-6 py-4 text-center text-xs text-neutral-200">
+      <div className="relative overflow-hidden bg-neutral-950 px-6 py-4 text-center text-xs text-neutral-200">
+        <Watermark />
         Design and Development by{" "}
         <a
           href="https://damilolaogunnaike.com"
