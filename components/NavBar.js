@@ -1,7 +1,10 @@
+import Watermark from "./Watermark";
+
 export default function NavBar({ cartCount = 0 }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-30 bg-white/30 backdrop-blur-sm">
-      <nav className="flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:px-12">
+    <header className="fixed inset-x-0 top-0 z-30 overflow-hidden bg-black">
+      <Watermark />
+      <nav className="relative z-10 flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:px-12 text-white">
         <a href="#hero" className="flex items-center gap-3">
           <img
             src="/logo.png"
@@ -11,7 +14,7 @@ export default function NavBar({ cartCount = 0 }) {
         </a>
 
         <button
-          className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-black transition hover:opacity-80"
+          className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-white transition hover:opacity-80"
           aria-label="Open cart"
         >
           <img
