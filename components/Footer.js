@@ -49,7 +49,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="relative overflow-hidden bg-neutral-950 px-6 py-4 text-center text-xs text-neutral-200">
+      <div className="relative overflow-hidden bg-black px-6 py-4 text-center text-xs text-neutral-200">
         <Watermark />
         Design and Development by{" "}
         <a
