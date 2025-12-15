@@ -7,7 +7,7 @@ import { products } from "../data/products";
 export default function Home() {
   return (
     <main className="relative flex min-h-screen flex-col">
-      <NavBar cartCount={products.length} />
+      <NavBar />
       <Hero />
       <ProductGrid products={products} />
       <Footer />
