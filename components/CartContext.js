@@ -1,11 +1,36 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("laglivin_cart_v1");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setItems(parsed);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setHasHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
+    try {
+      window.localStorage.setItem("laglivin_cart_v1", JSON.stringify(items));
+    } catch {
+      // ignore
+    }
+  }, [items, hasHydrated]);
 
   const addItem = (product, quantity = 1) => {
     const qty = Math.max(1, quantity);
@@ -20,6 +45,7 @@ export function CartProvider({ children }) {
       }
       return [...prev, { ...product, quantity: qty }];
     });
+    setIsOpen(true);
   };
 
   const updateQuantity = (slug, delta) => {
@@ -45,6 +71,10 @@ export function CartProvider({ children }) {
     );
   };
 
+  const openCart = () => setIsOpen(true);
+  const closeCart = () => setIsOpen(false);
+  const toggleCart = () => setIsOpen((v) => !v);
+
   const value = useMemo(() => {
     const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
     return {
@@ -53,8 +83,12 @@ export function CartProvider({ children }) {
       addItem,
       updateQuantity,
       setQuantity,
+      isOpen,
+      openCart,
+      closeCart,
+      toggleCart,
     };
-  }, [items]);
+  }, [items, isOpen]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

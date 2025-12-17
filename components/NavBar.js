@@ -2,25 +2,27 @@
 
 import Watermark from "./Watermark";
 import { useCart } from "./CartContext";
+import Link from "next/link";
 
 export default function NavBar() {
-  const { totalCount } = useCart();
+  const { totalCount, toggleCart } = useCart();
 
   return (
     <header className="fixed inset-x-0 top-0 z-30 overflow-hidden bg-black">
       <Watermark />
       <nav className="relative z-10 flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:px-12 text-white">
-        <a href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <img
             src="/logo.png"
             alt="Lag Livin logo"
             className="h-12 w-auto object-contain sm:h-14"
           />
-        </a>
+        </Link>
 
         <button
           className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-white transition hover:opacity-80"
           aria-label="Open cart"
+          onClick={toggleCart}
         >
           <img
             src="/cart.png"
