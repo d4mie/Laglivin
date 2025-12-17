@@ -11,6 +11,11 @@ const inter = Inter({
 export const metadata = {
   title: "Laglivin Store",
   description: "Laglivin — Volume 2: In the Making. A curated magazine experience.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }) {
