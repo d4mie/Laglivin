@@ -1,6 +1,5 @@
-const BACKDROP_LINES = Array.from({ length: 10 }, () => "NO LABELS");
-
-export default function Watermark({ className = "" }) {
+export default function Watermark({ className = "", lines = 10 }) {
+  const BACKDROP_LINES = Array.from({ length: lines }, () => "NO LABELS");
   return (
     <div
       className={`absolute inset-0 opacity-25 pointer-events-none ${className}`}

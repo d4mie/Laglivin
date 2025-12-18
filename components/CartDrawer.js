@@ -150,17 +150,23 @@ export default function CartDrawer() {
             <span>Subtotal</span>
             <span>{formatPriceNaira(subtotal)}</span>
           </div>
-          <button
-            className={`mt-4 w-full rounded-full px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] transition ${
-              isEmpty
-                ? "cursor-not-allowed bg-white/10 text-white/60"
-                : "bg-white text-black hover:bg-amber-300"
-            }`}
-            type="button"
-            disabled={isEmpty}
-          >
-            {isEmpty ? "Cart is empty" : "Checkout"}
-          </button>
+          {isEmpty ? (
+            <button
+              className="mt-4 w-full cursor-not-allowed rounded-full bg-white/10 px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/60"
+              type="button"
+              disabled
+            >
+              Cart is empty
+            </button>
+          ) : (
+            <Link
+              href="/checkout"
+              onClick={closeCart}
+              className="mt-4 block w-full rounded-full bg-white px-5 py-3 text-center text-sm font-semibold uppercase tracking-[0.18em] text-black transition hover:bg-amber-300"
+            >
+              Checkout
+            </Link>
+          )}
         </div>
       </div>
     </div>

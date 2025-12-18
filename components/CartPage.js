@@ -125,12 +125,12 @@ export default function CartPage() {
               {formatPriceNaira(subtotal)}
             </p>
           </div>
-          <button
-            className="mt-6 w-full rounded-full bg-white px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black transition hover:bg-amber-300"
-            type="button"
+          <Link
+            href="/checkout"
+            className="mt-6 block w-full rounded-full bg-white px-5 py-3 text-center text-sm font-semibold uppercase tracking-[0.18em] text-black transition hover:bg-amber-300"
           >
             Checkout
-          </button>
+          </Link>
         </aside>
       </div>
     </section>
