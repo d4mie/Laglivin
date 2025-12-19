@@ -1,7 +1,7 @@
 export const products = [
   {
     slug: "laglivin-logo-framework",
-    image: "/mag1.jpg",
+    image: "/logo framework.png",
     title: "Laglivin Logo Framework",
     price: "₦100,000",
   },
@@ -27,13 +27,13 @@ export const products = [
   },
   {
     slug: "pool-art-work",
-    image: "/mag5.jpg",
+    image: "/pool artwork.png",
     title: "Pool Art Work",
     price: "₦130,000",
   },
   {
     slug: "gloves-art-work",
-    image: "/mag5.jpg",
+    image: "/gloves artwork.png",
     title: "Gloves Art Work",
     price: "₦150,000",
   },
