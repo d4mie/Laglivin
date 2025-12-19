@@ -16,6 +16,10 @@ function parsePriceToNumber(price) {
   return Number.isNaN(numeric) ? 0 : numeric;
 }
 
+function isBlank(value) {
+  return !String(value ?? "").trim();
+}
+
 function Input({ label, type = "text", placeholder, rightSlot, ...props }) {
   return (
     <label className="block">
@@ -130,15 +134,67 @@ export default function CheckoutForm() {
 
   const totalNaira = subtotalNaira + shippingCost;
 
+  const missingRequiredFields = useMemo(() => {
+    const missing = [];
+
+    // Contact
+    if (!email.trim() || !email.includes("@")) missing.push("Email");
+
+    // Delivery (everything except explicitly optional fields)
+    if (isBlank(firstName)) missing.push("First name");
+    if (isBlank(lastName)) missing.push("Last name");
+    if (isBlank(address)) missing.push("Address");
+    if (isBlank(city)) missing.push("City");
+    if (isBlank(stateRegion)) missing.push("State");
+    if (isBlank(phone)) missing.push("Phone");
+
+    // Billing (only if user chose different billing address)
+    if (!billingSameAsShipping) {
+      if (isBlank(billingFirstName)) missing.push("Billing first name");
+      if (isBlank(billingLastName)) missing.push("Billing last name");
+      if (isBlank(billingAddress)) missing.push("Billing address");
+      if (isBlank(billingCity)) missing.push("Billing city");
+      if (isBlank(billingStateRegion)) missing.push("Billing state");
+      if (isBlank(billingPhone)) missing.push("Billing phone");
+    }
+
+    return missing;
+  }, [
+    email,
+    firstName,
+    lastName,
+    address,
+    city,
+    stateRegion,
+    phone,
+    billingSameAsShipping,
+    billingFirstName,
+    billingLastName,
+    billingAddress,
+    billingCity,
+    billingStateRegion,
+    billingPhone,
+  ]);
+
+  const canPay =
+    items.length > 0 &&
+    !isPaying &&
+    totalNaira > 0 &&
+    missingRequiredFields.length === 0;
+
   const onPayNow = async () => {
     setPayError("");
 
-    if (!email || !email.includes("@")) {
-      setPayError("Please enter a valid email to continue.");
-      return;
-    }
     if (!items.length) {
       setPayError("Your cart is empty.");
+      return;
+    }
+    if (missingRequiredFields.length) {
+      setPayError(
+        `Please fill: ${missingRequiredFields.slice(0, 5).join(", ")}${
+          missingRequiredFields.length > 5 ? "…" : ""
+        }`
+      );
       return;
     }
     if (totalNaira <= 0) {
@@ -234,6 +290,7 @@ export default function CheckoutForm() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
           rightSlot={
             <svg
               aria-hidden="true"
@@ -386,12 +443,14 @@ export default function CheckoutForm() {
               placeholder="First name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              required
             />
             <Input
               label="Last name"
               placeholder="Last name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              required
             />
           </div>
 
@@ -407,6 +466,7 @@ export default function CheckoutForm() {
             placeholder="Address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            required
           />
 
           <Input
@@ -422,12 +482,14 @@ export default function CheckoutForm() {
               placeholder="City"
               value={city}
               onChange={(e) => setCity(e.target.value)}
+              required
             />
             <label className="block">
               <span className="sr-only">State</span>
               <select
                 value={stateRegion}
                 onChange={(e) => setStateRegion(e.target.value)}
+                required
                 className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/30"
               >
                 <option>Lagos</option>
@@ -449,6 +511,7 @@ export default function CheckoutForm() {
             placeholder="Phone"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            required
             rightSlot={
               <div className="flex items-center gap-2">
                 <span className="text-xs text-white/50">?</span>
@@ -552,12 +615,14 @@ export default function CheckoutForm() {
                 placeholder="First name"
                 value={billingFirstName}
                 onChange={(e) => setBillingFirstName(e.target.value)}
+                required
               />
               <Input
                 label="Billing last name"
                 placeholder="Last name"
                 value={billingLastName}
                 onChange={(e) => setBillingLastName(e.target.value)}
+                required
               />
             </div>
 
@@ -573,6 +638,7 @@ export default function CheckoutForm() {
               placeholder="Address"
               value={billingAddress}
               onChange={(e) => setBillingAddress(e.target.value)}
+              required
             />
 
             <Input
@@ -588,12 +654,14 @@ export default function CheckoutForm() {
                 placeholder="City"
                 value={billingCity}
                 onChange={(e) => setBillingCity(e.target.value)}
+                required
               />
               <label className="block">
                 <span className="sr-only">Billing state</span>
                 <select
                   value={billingStateRegion}
                   onChange={(e) => setBillingStateRegion(e.target.value)}
+                  required
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/30"
                 >
                   <option>Lagos</option>
@@ -615,6 +683,7 @@ export default function CheckoutForm() {
               placeholder="Phone"
               value={billingPhone}
               onChange={(e) => setBillingPhone(e.target.value)}
+              required
               rightSlot={
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-white/50">?</span>
@@ -628,9 +697,9 @@ export default function CheckoutForm() {
       <button
         type="button"
         onClick={onPayNow}
-        disabled={isPaying || !items.length}
+        disabled={!canPay}
         className={`mt-8 w-full rounded-xl px-5 py-4 text-sm font-semibold text-white transition focus:outline-none focus:ring-4 focus:ring-blue-500/30 ${
-          isPaying || !items.length
+          !canPay
             ? "cursor-not-allowed bg-blue-600/40"
             : "bg-blue-600 hover:bg-blue-500"
         }`}
@@ -641,6 +710,10 @@ export default function CheckoutForm() {
 
       {payError ? (
         <p className="mt-3 text-center text-sm text-red-300">{payError}</p>
+      ) : missingRequiredFields.length ? (
+        <p className="mt-3 text-center text-xs text-white/50">
+          Fill all required fields to continue.
+        </p>
       ) : null}
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/50">
