@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCart } from "./CartContext";
 
 function formatNaira(value) {
@@ -20,7 +20,14 @@ function isBlank(value) {
   return !String(value ?? "").trim();
 }
 
-function Input({ label, type = "text", placeholder, rightSlot, ...props }) {
+function Input({
+  label,
+  type = "text",
+  placeholder,
+  rightSlot,
+  rightSlotInteractive = false,
+  ...props
+}) {
   return (
     <label className="block">
       <span className="sr-only">{label}</span>
@@ -32,12 +39,51 @@ function Input({ label, type = "text", placeholder, rightSlot, ...props }) {
           {...props}
         />
         {rightSlot ? (
-          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/50">
+          <div
+            className={`absolute right-3 top-1/2 -translate-y-1/2 text-white/50 ${
+              rightSlotInteractive ? "pointer-events-auto" : "pointer-events-none"
+            }`}
+          >
             {rightSlot}
           </div>
         ) : null}
       </div>
     </label>
+  );
+}
+
+function HelpPopover({
+  open,
+  text = "In case we need to contact you about your order",
+}) {
+  if (!open) return null;
+  return (
+    <div className="absolute right-0 top-full z-20 mt-2 w-64 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-black shadow-xl ring-1 ring-black/10">
+      {text}
+    </div>
+  );
+}
+
+function PhoneHelpIcon({ open, onOpen, onHoverChange }) {
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        aria-label="Why we need your phone number"
+        onMouseEnter={() => onHoverChange?.(true)}
+        onMouseLeave={() => onHoverChange?.(false)}
+        onPointerEnter={() => onHoverChange?.(true)}
+        onPointerLeave={() => onHoverChange?.(false)}
+        onWheel={(e) => {
+          // Only open on scroll over the icon (per UX request)
+          onOpen();
+        }}
+        className="flex h-7 w-7 items-center justify-center rounded-full border border-white/30 bg-black/40 text-xs font-semibold text-white/80 shadow-sm ring-1 ring-white/10 transition hover:border-white/40 hover:bg-black/50 hover:text-white"
+      >
+        ?
+      </button>
+      <HelpPopover open={open} />
+    </div>
   );
 }
 
@@ -119,6 +165,14 @@ export default function CheckoutForm() {
   const [billingPhone, setBillingPhone] = useState("");
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState("");
+  const [showPhoneHelp, setShowPhoneHelp] = useState(false);
+  const [showBillingPhoneHelp, setShowBillingPhoneHelp] = useState(false);
+  const [isPhoneHelpHover, setIsPhoneHelpHover] = useState(false);
+  const [isBillingPhoneHelpHover, setIsBillingPhoneHelpHover] = useState(false);
+  const phoneHelpTimerRef = useRef(null);
+  const billingPhoneHelpTimerRef = useRef(null);
+  const phoneHelpLastOpenRef = useRef(0);
+  const billingPhoneHelpLastOpenRef = useRef(0);
 
   const subtotalNaira = useMemo(() => {
     return items.reduce(
@@ -181,6 +235,41 @@ export default function CheckoutForm() {
     !isPaying &&
     totalNaira > 0 &&
     missingRequiredFields.length === 0;
+
+  const openPhoneHelp = () => {
+    const now = Date.now();
+    if (now - phoneHelpLastOpenRef.current < 250) return;
+    phoneHelpLastOpenRef.current = now;
+    setShowPhoneHelp(true);
+    if (phoneHelpTimerRef.current) window.clearTimeout(phoneHelpTimerRef.current);
+    phoneHelpTimerRef.current = window.setTimeout(
+      () => setShowPhoneHelp(false),
+      2500
+    );
+  };
+
+  const openBillingPhoneHelp = () => {
+    const now = Date.now();
+    if (now - billingPhoneHelpLastOpenRef.current < 250) return;
+    billingPhoneHelpLastOpenRef.current = now;
+    setShowBillingPhoneHelp(true);
+    if (billingPhoneHelpTimerRef.current)
+      window.clearTimeout(billingPhoneHelpTimerRef.current);
+    billingPhoneHelpTimerRef.current = window.setTimeout(
+      () => setShowBillingPhoneHelp(false),
+      2500
+    );
+  };
+
+  useEffect(() => {
+    const onWheel = () => {
+      // If the user is scrolling while hovering the "?" icon, show the helper.
+      if (isPhoneHelpHover) openPhoneHelp();
+      if (isBillingPhoneHelpHover) openBillingPhoneHelp();
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, [isPhoneHelpHover, isBillingPhoneHelpHover]);
 
   const onPayNow = async () => {
     setPayError("");
@@ -512,10 +601,13 @@ export default function CheckoutForm() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
+            rightSlotInteractive
             rightSlot={
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-white/50">?</span>
-              </div>
+              <PhoneHelpIcon
+                open={showPhoneHelp}
+                onOpen={openPhoneHelp}
+                onHoverChange={setIsPhoneHelpHover}
+              />
             }
           />
 
@@ -684,10 +776,13 @@ export default function CheckoutForm() {
               value={billingPhone}
               onChange={(e) => setBillingPhone(e.target.value)}
               required
+              rightSlotInteractive
               rightSlot={
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-white/50">?</span>
-                </div>
+                <PhoneHelpIcon
+                  open={showBillingPhoneHelp}
+                  onOpen={openBillingPhoneHelp}
+                  onHoverChange={setIsBillingPhoneHelpHover}
+                />
               }
             />
           </div>
