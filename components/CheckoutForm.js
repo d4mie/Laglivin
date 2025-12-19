@@ -2,11 +2,18 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useCart } from "./CartContext";
 
 function formatNaira(value) {
   const amount = Number(value);
   if (Number.isNaN(amount)) return `${value}`;
   return `₦${amount.toLocaleString("en-NG", { minimumFractionDigits: 0 })}`;
+}
+
+function parsePriceToNumber(price) {
+  if (typeof price !== "string") return Number(price) || 0;
+  const numeric = Number(price.replace(/[^\d.]/g, ""));
+  return Number.isNaN(numeric) ? 0 : numeric;
 }
 
 function Input({ label, type = "text", placeholder, rightSlot, ...props }) {
@@ -81,6 +88,7 @@ function RadioRow({ checked, onChange, title, subtitle, rightSlot, name }) {
 }
 
 export default function CheckoutForm() {
+  const { items } = useCart();
   const [email, setEmail] = useState("");
   const [deliveryMode, setDeliveryMode] = useState("ship"); // ship | pickup
   const [country, setCountry] = useState("Nigeria");
@@ -105,11 +113,107 @@ export default function CheckoutForm() {
   const [billingStateRegion, setBillingStateRegion] = useState("Lagos");
   const [billingPostalCode, setBillingPostalCode] = useState("");
   const [billingPhone, setBillingPhone] = useState("");
+  const [isPaying, setIsPaying] = useState(false);
+  const [payError, setPayError] = useState("");
+
+  const subtotalNaira = useMemo(() => {
+    return items.reduce(
+      (sum, item) => sum + parsePriceToNumber(item.price) * item.quantity,
+      0
+    );
+  }, [items]);
 
   const shippingCost = useMemo(() => {
     if (deliveryMode !== "ship") return 0;
     return shippingMethod === "lagos" ? 5000 : 7000;
   }, [deliveryMode, shippingMethod]);
+
+  const totalNaira = subtotalNaira + shippingCost;
+
+  const onPayNow = async () => {
+    setPayError("");
+
+    if (!email || !email.includes("@")) {
+      setPayError("Please enter a valid email to continue.");
+      return;
+    }
+    if (!items.length) {
+      setPayError("Your cart is empty.");
+      return;
+    }
+    if (totalNaira <= 0) {
+      setPayError("Invalid total amount.");
+      return;
+    }
+
+    setIsPaying(true);
+    try {
+      const amountKobo = Math.round(totalNaira * 100);
+      const res = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          amountKobo,
+          metadata: {
+            cart: items.map((i) => ({
+              slug: i.slug,
+              title: i.title,
+              price: i.price,
+              quantity: i.quantity,
+            })),
+            shipping: {
+              mode: deliveryMode,
+              method: deliveryMode === "ship" ? shippingMethod : "pickup",
+              shippingCostNaira: shippingCost,
+            },
+            contact: {
+              country,
+              firstName,
+              lastName,
+              company,
+              address,
+              apartment,
+              city,
+              stateRegion,
+              postalCode,
+              phone,
+            },
+            billing: billingSameAsShipping
+              ? { sameAsShipping: true }
+              : {
+                  sameAsShipping: false,
+                  country: billingCountry,
+                  firstName: billingFirstName,
+                  lastName: billingLastName,
+                  company: billingCompany,
+                  address: billingAddress,
+                  apartment: billingApartment,
+                  city: billingCity,
+                  stateRegion: billingStateRegion,
+                  postalCode: billingPostalCode,
+                  phone: billingPhone,
+                },
+            totals: {
+              subtotalNaira,
+              shippingCostNaira: shippingCost,
+              totalNaira,
+              currency: "NGN",
+            },
+          },
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json?.ok || !json?.authorization_url) {
+        throw new Error(json?.error || "Unable to start payment. Try again.");
+      }
+      window.location.href = json.authorization_url;
+    } catch (e) {
+      setPayError(e?.message || "Payment failed to start. Try again.");
+    } finally {
+      setIsPaying(false);
+    }
+  };
 
   return (
     <div className="relative z-10 mx-auto w-full max-w-[560px] px-4 pb-16 pt-10 sm:px-6">
@@ -523,11 +627,21 @@ export default function CheckoutForm() {
 
       <button
         type="button"
-        className="mt-8 w-full rounded-xl bg-blue-600 px-5 py-4 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/30"
+        onClick={onPayNow}
+        disabled={isPaying || !items.length}
+        className={`mt-8 w-full rounded-xl px-5 py-4 text-sm font-semibold text-white transition focus:outline-none focus:ring-4 focus:ring-blue-500/30 ${
+          isPaying || !items.length
+            ? "cursor-not-allowed bg-blue-600/40"
+            : "bg-blue-600 hover:bg-blue-500"
+        }`}
         aria-label="Pay now"
       >
-        Pay now
+        {isPaying ? "Redirecting…" : "Pay now"}
       </button>
+
+      {payError ? (
+        <p className="mt-3 text-center text-sm text-red-300">{payError}</p>
+      ) : null}
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/50">
         <Link href="/refund-policy" className="hover:text-white">
