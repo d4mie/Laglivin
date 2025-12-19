@@ -4,6 +4,45 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCart } from "./CartContext";
 
+const NIGERIA_STATES = [
+  "Abia",
+  "Adamawa",
+  "Akwa Ibom",
+  "Anambra",
+  "Bauchi",
+  "Bayelsa",
+  "Benue",
+  "Borno",
+  "Cross River",
+  "Delta",
+  "Ebonyi",
+  "Edo",
+  "Ekiti",
+  "Enugu",
+  "Gombe",
+  "Imo",
+  "Jigawa",
+  "Kaduna",
+  "Kano",
+  "Katsina",
+  "Kebbi",
+  "Kogi",
+  "Kwara",
+  "Lagos",
+  "Nasarawa",
+  "Niger",
+  "Ogun",
+  "Ondo",
+  "Osun",
+  "Oyo",
+  "Plateau",
+  "Rivers",
+  "Sokoto",
+  "Taraba",
+  "Yobe",
+  "Zamfara",
+];
+
 function formatNaira(value) {
   const amount = Number(value);
   if (Number.isNaN(amount)) return `${value}`;
@@ -18,6 +57,17 @@ function parsePriceToNumber(price) {
 
 function isBlank(value) {
   return !String(value ?? "").trim();
+}
+
+function createHiddenEmailAddress(email) {
+  const raw = String(email || "").trim();
+  const at = raw.indexOf("@");
+  if (at <= 0 || at === raw.length - 1) return "";
+  const local = raw.slice(0, at);
+  const domain = raw.slice(at + 1);
+  const baseLocal = local.split("+")[0] || local;
+  const token = Math.random().toString(36).slice(2, 6);
+  return `${baseLocal}+laglivin-${token}@${domain}`;
 }
 
 function Input({
@@ -47,6 +97,47 @@ function Input({
             {rightSlot}
           </div>
         ) : null}
+      </div>
+    </label>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M7 10l5 5 5-5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function SelectField({ label, value, onChange, children, required }) {
+  return (
+    <label className="block">
+      <span className="sr-only">{label}</span>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={onChange}
+          required={required}
+          className="h-12 w-full appearance-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white outline-none transition focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/30"
+        >
+          {children}
+        </select>
+        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/50">
+          <ChevronDownIcon />
+        </div>
       </div>
     </label>
   );
@@ -140,6 +231,8 @@ function RadioRow({ checked, onChange, title, subtitle, rightSlot, name }) {
 export default function CheckoutForm() {
   const { items } = useCart();
   const [email, setEmail] = useState("");
+  const [emailHidden, setEmailHidden] = useState(false);
+  const [emailOriginal, setEmailOriginal] = useState("");
   const [deliveryMode, setDeliveryMode] = useState("ship"); // ship | pickup
   const [country, setCountry] = useState("Nigeria");
   const [firstName, setFirstName] = useState("");
@@ -235,6 +328,31 @@ export default function CheckoutForm() {
     !isPaying &&
     totalNaira > 0 &&
     missingRequiredFields.length === 0;
+
+  const toggleHideEmail = () => {
+    setPayError("");
+    if (emailHidden) {
+      // restore original email
+      setEmail(emailOriginal || email);
+      setEmailHidden(false);
+      setEmailOriginal("");
+      return;
+    }
+
+    const current = email.trim();
+    if (!current || !current.includes("@")) {
+      setPayError("Enter your email first, then use Hide My Email.");
+      return;
+    }
+    const hidden = createHiddenEmailAddress(current);
+    if (!hidden) {
+      setPayError("Please enter a valid email to use Hide My Email.");
+      return;
+    }
+    setEmailOriginal(current);
+    setEmail(hidden);
+    setEmailHidden(true);
+  };
 
   const openPhoneHelp = () => {
     const now = Date.now();
@@ -378,7 +496,14 @@ export default function CheckoutForm() {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            // If user edits the field manually, turn off "hidden" state.
+            if (emailHidden) {
+              setEmailHidden(false);
+              setEmailOriginal("");
+            }
+          }}
           required
           rightSlot={
             <svg
@@ -405,7 +530,16 @@ export default function CheckoutForm() {
           }
         />
 
-        <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+        <button
+          type="button"
+          onClick={toggleHideEmail}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition ${
+            emailHidden
+              ? "border-blue-500/50 bg-blue-500/10 ring-1 ring-blue-500/20"
+              : "border-white/10 bg-white/5 hover:border-white/20"
+          }`}
+          aria-pressed={emailHidden}
+        >
           <div className="flex items-start gap-3">
             <div className="mt-0.5 text-white/60">
               <svg
@@ -435,14 +569,28 @@ export default function CheckoutForm() {
                 />
               </svg>
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-white">Hide My Email…</p>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-white">
+                  {emailHidden ? "Hide My Email… (On)" : "Hide My Email…"}
+                </p>
+                {emailHidden ? (
+                  <span className="text-xs font-semibold text-blue-300">
+                    Turn off
+                  </span>
+                ) : (
+                  <span className="text-xs font-semibold text-white/60">
+                    Turn on
+                  </span>
+                )}
+              </div>
               <p className="mt-0.5 text-xs text-white/60">
-                Create a unique, random address that forwards to your inbox.
+                Creates a unique email alias that routes to your inbox (via plus
+                addressing).
               </p>
             </div>
           </div>
-        </div>
+        </button>
       </div>
 
       <div className="mt-10">
@@ -512,19 +660,16 @@ export default function CheckoutForm() {
         </div>
 
         <div className="mt-4 space-y-3">
-          <label className="block">
-            <span className="sr-only">Country/Region</span>
-            <select
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/30"
-            >
-              <option>Nigeria</option>
-              <option>Ghana</option>
-              <option>United States</option>
-              <option>United Kingdom</option>
-            </select>
-          </label>
+        <SelectField
+          label="Country/Region"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+        >
+          <option>Nigeria</option>
+          <option>Ghana</option>
+          <option>United States</option>
+          <option>United Kingdom</option>
+        </SelectField>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Input
@@ -573,20 +718,18 @@ export default function CheckoutForm() {
               onChange={(e) => setCity(e.target.value)}
               required
             />
-            <label className="block">
-              <span className="sr-only">State</span>
-              <select
-                value={stateRegion}
-                onChange={(e) => setStateRegion(e.target.value)}
-                required
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/30"
-              >
-                <option>Lagos</option>
-                <option>Abuja</option>
-                <option>Rivers</option>
-                <option>Oyo</option>
-              </select>
-            </label>
+            <SelectField
+              label="State"
+              value={stateRegion}
+              onChange={(e) => setStateRegion(e.target.value)}
+              required
+            >
+              {NIGERIA_STATES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </SelectField>
             <Input
               label="Postal code (optional)"
               placeholder="Postal code (optional)"
@@ -687,19 +830,16 @@ export default function CheckoutForm() {
 
         {!billingSameAsShipping ? (
           <div className="mt-4 space-y-3">
-            <label className="block">
-              <span className="sr-only">Billing country/region</span>
-              <select
-                value={billingCountry}
-                onChange={(e) => setBillingCountry(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/30"
-              >
-                <option>Nigeria</option>
-                <option>Ghana</option>
-                <option>United States</option>
-                <option>United Kingdom</option>
-              </select>
-            </label>
+            <SelectField
+              label="Billing country/region"
+              value={billingCountry}
+              onChange={(e) => setBillingCountry(e.target.value)}
+            >
+              <option>Nigeria</option>
+              <option>Ghana</option>
+              <option>United States</option>
+              <option>United Kingdom</option>
+            </SelectField>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Input
@@ -748,20 +888,18 @@ export default function CheckoutForm() {
                 onChange={(e) => setBillingCity(e.target.value)}
                 required
               />
-              <label className="block">
-                <span className="sr-only">Billing state</span>
-                <select
-                  value={billingStateRegion}
-                  onChange={(e) => setBillingStateRegion(e.target.value)}
-                  required
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/30"
-                >
-                  <option>Lagos</option>
-                  <option>Abuja</option>
-                  <option>Rivers</option>
-                  <option>Oyo</option>
-                </select>
-              </label>
+              <SelectField
+                label="Billing state"
+                value={billingStateRegion}
+                onChange={(e) => setBillingStateRegion(e.target.value)}
+                required
+              >
+                {NIGERIA_STATES.map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </SelectField>
               <Input
                 label="Billing postal code (optional)"
                 placeholder="Postal code (optional)"
