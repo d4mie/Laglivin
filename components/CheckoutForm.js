@@ -155,20 +155,17 @@ function HelpPopover({
   );
 }
 
-function PhoneHelpIcon({ open, onOpen, onHoverChange }) {
+function PhoneHelpIcon({ open, onOpen, buttonRef }) {
   return (
     <div className="relative">
       <button
         type="button"
         aria-label="Why we need your phone number"
-        onMouseEnter={() => onHoverChange?.(true)}
-        onMouseLeave={() => onHoverChange?.(false)}
-        onPointerEnter={() => onHoverChange?.(true)}
-        onPointerLeave={() => onHoverChange?.(false)}
         onWheel={(e) => {
           // Only open on scroll over the icon (per UX request)
           onOpen();
         }}
+        ref={buttonRef}
         className="flex h-7 w-7 items-center justify-center rounded-full border border-white/30 bg-black/40 text-xs font-semibold text-white/80 shadow-sm ring-1 ring-white/10 transition hover:border-white/40 hover:bg-black/50 hover:text-white"
       >
         ?
@@ -233,6 +230,7 @@ export default function CheckoutForm() {
   const [email, setEmail] = useState("");
   const [emailHidden, setEmailHidden] = useState(false);
   const [emailOriginal, setEmailOriginal] = useState("");
+  const [hideEmailError, setHideEmailError] = useState("");
   const [deliveryMode, setDeliveryMode] = useState("ship"); // ship | pickup
   const [country, setCountry] = useState("Nigeria");
   const [firstName, setFirstName] = useState("");
@@ -260,12 +258,13 @@ export default function CheckoutForm() {
   const [payError, setPayError] = useState("");
   const [showPhoneHelp, setShowPhoneHelp] = useState(false);
   const [showBillingPhoneHelp, setShowBillingPhoneHelp] = useState(false);
-  const [isPhoneHelpHover, setIsPhoneHelpHover] = useState(false);
-  const [isBillingPhoneHelpHover, setIsBillingPhoneHelpHover] = useState(false);
   const phoneHelpTimerRef = useRef(null);
   const billingPhoneHelpTimerRef = useRef(null);
   const phoneHelpLastOpenRef = useRef(0);
   const billingPhoneHelpLastOpenRef = useRef(0);
+  const phoneHelpBtnRef = useRef(null);
+  const billingPhoneHelpBtnRef = useRef(null);
+  const pointerPosRef = useRef({ x: -1, y: -1 });
 
   const subtotalNaira = useMemo(() => {
     return items.reduce(
@@ -330,7 +329,7 @@ export default function CheckoutForm() {
     missingRequiredFields.length === 0;
 
   const toggleHideEmail = () => {
-    setPayError("");
+    setHideEmailError("");
     if (emailHidden) {
       // restore original email
       setEmail(emailOriginal || email);
@@ -341,12 +340,12 @@ export default function CheckoutForm() {
 
     const current = email.trim();
     if (!current || !current.includes("@")) {
-      setPayError("Enter your email first, then use Hide My Email.");
+      setHideEmailError("Enter your email first, then use Hide My Email.");
       return;
     }
     const hidden = createHiddenEmailAddress(current);
     if (!hidden) {
-      setPayError("Please enter a valid email to use Hide My Email.");
+      setHideEmailError("Please enter a valid email to use Hide My Email.");
       return;
     }
     setEmailOriginal(current);
@@ -380,14 +379,29 @@ export default function CheckoutForm() {
   };
 
   useEffect(() => {
+    const onPointerMove = (e) => {
+      pointerPosRef.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onPointerMove);
+  }, []);
+
+  useEffect(() => {
+    const isPointerInside = (el) => {
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      const { x, y } = pointerPosRef.current;
+      return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    };
+
     const onWheel = () => {
-      // If the user is scrolling while hovering the "?" icon, show the helper.
-      if (isPhoneHelpHover) openPhoneHelp();
-      if (isBillingPhoneHelpHover) openBillingPhoneHelp();
+      // Trigger only when scrolling while the pointer is over the "?" icon.
+      if (isPointerInside(phoneHelpBtnRef.current)) openPhoneHelp();
+      if (isPointerInside(billingPhoneHelpBtnRef.current)) openBillingPhoneHelp();
     };
     window.addEventListener("wheel", onWheel, { passive: true });
     return () => window.removeEventListener("wheel", onWheel);
-  }, [isPhoneHelpHover, isBillingPhoneHelpHover]);
+  }, []);
 
   const onPayNow = async () => {
     setPayError("");
@@ -503,6 +517,7 @@ export default function CheckoutForm() {
               setEmailHidden(false);
               setEmailOriginal("");
             }
+            if (hideEmailError) setHideEmailError("");
           }}
           required
           rightSlot={
@@ -591,6 +606,9 @@ export default function CheckoutForm() {
             </div>
           </div>
         </button>
+        {hideEmailError ? (
+          <p className="text-sm text-red-300">{hideEmailError}</p>
+        ) : null}
       </div>
 
       <div className="mt-10">
@@ -749,7 +767,7 @@ export default function CheckoutForm() {
               <PhoneHelpIcon
                 open={showPhoneHelp}
                 onOpen={openPhoneHelp}
-                onHoverChange={setIsPhoneHelpHover}
+                buttonRef={phoneHelpBtnRef}
               />
             }
           />
@@ -919,7 +937,7 @@ export default function CheckoutForm() {
                 <PhoneHelpIcon
                   open={showBillingPhoneHelp}
                   onOpen={openBillingPhoneHelp}
-                  onHoverChange={setIsBillingPhoneHelpHover}
+                  buttonRef={billingPhoneHelpBtnRef}
                 />
               }
             />
