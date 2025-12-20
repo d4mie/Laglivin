@@ -15,14 +15,14 @@ export const products = [
     slug: "pool-art-work",
     image: "/pool artwork.png",
     title: "Life After Midnight",
-    price: "₦99,000",
+    price: "₦149,000",
     tag: "Limited",
   },
   {
     slug: "gloves-art-work",
     image: "/gloves artwork.png",
     title: "House Always Wins",
-    price: "₦99,000",
+    price: "₦149,000",
     tag: "Limited",
   },
   {

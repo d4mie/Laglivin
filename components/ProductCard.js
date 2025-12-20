@@ -49,12 +49,14 @@ export default function ProductCard({
   return (
     <Link
       href={`/products/${slug}`}
-      ref={cardRef}
-      onMouseEnter={() => hoverImage && setShowAlt(true)}
-      onMouseLeave={() => hoverImage && setShowAlt(false)}
       className="group block h-full rounded-2xl bg-white/80 text-black shadow-subtle ring-1 ring-neutral-200/80 backdrop-blur transition hover:-translate-y-1 hover:shadow-lg hover:ring-neutral-300"
     >
-      <article className="flex h-full flex-col overflow-hidden rounded-2xl">
+      <article
+        ref={cardRef}
+        onPointerEnter={() => hoverImage && setShowAlt(true)}
+        onPointerLeave={() => hoverImage && setShowAlt(false)}
+        className="flex h-full flex-col overflow-hidden rounded-2xl"
+      >
         <div className="relative h-72 overflow-hidden bg-neutral-100">
           <img
             src={showAlt && hoverImage ? hoverImage : image}
@@ -86,4 +88,5 @@ export default function ProductCard({
     </Link>
   );
 }
+
 
