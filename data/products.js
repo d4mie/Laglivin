@@ -3,7 +3,7 @@ export const products = [
     slug: "laglivin-logo-framework",
     image: "/logo framework.png",
     title: "Laglivin Logo Framework",
-    price: "₦149,000",
+    price: "₦199,000",
     tag: "Limited",
     description: "Laglivin Logo Framework.",
     descriptionMore:
