@@ -6,6 +6,7 @@ import { useCart } from "./CartContext";
 export default function ProductDetail({ product }) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const inc = () => setQuantity((q) => Math.min(99, q + 1));
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
@@ -17,6 +18,7 @@ export default function ProductDetail({ product }) {
   const description =
     product.description ||
     "Laglivin Volume 2: In the Making is a visual story of Lagos and the creators who define its edge.";
+  const descriptionMore = product.descriptionMore || "";
 
   const details =
     product.details ||
@@ -38,9 +40,18 @@ export default function ProductDetail({ product }) {
 
         <div className="space-y-3 text-sm leading-relaxed text-white/80">
           <p>{description}</p>
-          <button className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70 underline decoration-white/30 decoration-1 underline-offset-4 hover:text-white">
-            Read More
-          </button>
+          {isExpanded && descriptionMore ? (
+            <p>{descriptionMore}</p>
+          ) : null}
+          {descriptionMore ? (
+            <button
+              type="button"
+              onClick={() => setIsExpanded((v) => !v)}
+              className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70 underline decoration-white/30 decoration-1 underline-offset-4 hover:text-white"
+            >
+              {isExpanded ? "Read Less" : "Read More"}
+            </button>
+          ) : null}
         </div>
 
         <div className="space-y-3 pt-4">
@@ -53,11 +64,11 @@ export default function ProductDetail({ product }) {
 
       {/* Center: Image */}
       <div className="my-10 flex justify-center lg:my-0">
-        <div className="overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10">
+        <div className="relative h-72 w-full overflow-hidden rounded-2xl bg-neutral-100 ring-1 ring-white/10">
           <img
             src={product.image}
             alt={product.title}
-            className="block h-full max-h-[540px] w-auto object-cover"
+            className="h-full w-full object-contain"
           />
         </div>
       </div>
@@ -68,20 +79,20 @@ export default function ProductDetail({ product }) {
           <p className="text-[11px] uppercase tracking-[0.22em] text-white/60">
             Quantity
           </p>
-          <div className="flex items-center justify-center gap-4 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold">
+          <div className="flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-semibold">
             <button
               type="button"
               onClick={dec}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-lg text-white/80 leading-none"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 text-base text-white/80 leading-none"
               aria-label="Decrease quantity"
             >
               –
             </button>
-            <span className="min-w-[28px] text-center text-base">{quantity}</span>
+            <span className="min-w-[24px] text-center">{quantity}</span>
             <button
               type="button"
               onClick={inc}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white bg-white text-lg text-black leading-none"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-white bg-white text-base text-black leading-none"
               aria-label="Increase quantity"
             >
               +

@@ -5,6 +5,11 @@ export const products = [
     title: "Laglivin Logo Framework",
     price: "₦149,000",
     tag: "Limited",
+    description: "Laglivin Logo Framework.",
+    descriptionMore:
+      "Always on the road, ready to go at any sound of opportunity, still making ourselves available for what you’d term feeling alive “living”.",
+    details:
+      "A cohesive logo system that ensures strong brand recognition and consistent visual communication across all touchpoints.",
   },
   {
     slug: "pool-art-work",
