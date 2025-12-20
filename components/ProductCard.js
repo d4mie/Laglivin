@@ -12,7 +12,7 @@ export default function ProductCard({
   tag,
 }) {
   const [showAlt, setShowAlt] = useState(false);
-  const imgWrapRef = useRef(null);
+  const cardRef = useRef(null);
   const pointerPosRef = useRef({ x: -1, y: -1 });
   const wheelTimerRef = useRef(null);
 
@@ -34,7 +34,7 @@ export default function ProductCard({
       return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
     };
     const onWheel = () => {
-      if (!isPointerInside(imgWrapRef.current)) return;
+      if (!isPointerInside(cardRef.current)) return;
       setShowAlt(true);
       if (wheelTimerRef.current) window.clearTimeout(wheelTimerRef.current);
       wheelTimerRef.current = window.setTimeout(() => setShowAlt(false), 900);
@@ -49,15 +49,13 @@ export default function ProductCard({
   return (
     <Link
       href={`/products/${slug}`}
+      ref={cardRef}
+      onMouseEnter={() => hoverImage && setShowAlt(true)}
+      onMouseLeave={() => hoverImage && setShowAlt(false)}
       className="group block h-full rounded-2xl bg-white/80 text-black shadow-subtle ring-1 ring-neutral-200/80 backdrop-blur transition hover:-translate-y-1 hover:shadow-lg hover:ring-neutral-300"
     >
       <article className="flex h-full flex-col overflow-hidden rounded-2xl">
-        <div
-          ref={imgWrapRef}
-          className="relative h-72 overflow-hidden bg-neutral-100"
-          onMouseEnter={() => hoverImage && setShowAlt(true)}
-          onMouseLeave={() => hoverImage && setShowAlt(false)}
-        >
+        <div className="relative h-72 overflow-hidden bg-neutral-100">
           <img
             src={showAlt && hoverImage ? hoverImage : image}
             alt={title}
