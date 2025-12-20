@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { upsertOrder } from "../../../../lib/ordersRepo";
 
 export const runtime = "nodejs";
 
@@ -46,6 +47,13 @@ export async function GET(req) {
   }
 
   // Paystack: data.status can be 'success', 'failed', 'abandoned'
+  await upsertOrder(reference, {
+    reference,
+    status: json.data?.status || "verified",
+    verifiedAt: new Date().toISOString(),
+    paystack: json.data,
+  });
+
   return NextResponse.json({ ok: true, data: json.data });
 }
 

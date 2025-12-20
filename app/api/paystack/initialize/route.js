@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { upsertOrder } from "../../../../lib/ordersRepo";
 
 export const runtime = "nodejs";
 
@@ -67,11 +68,24 @@ export async function POST(req) {
     );
   }
 
+  const reference = json.data?.reference;
+  if (reference) {
+    await upsertOrder(reference, {
+      reference,
+      status: "initialized",
+      createdAt: new Date().toISOString(),
+      email,
+      amountKobo: Math.round(amountKobo),
+      currency: "NGN",
+      metadata,
+    });
+  }
+
   return NextResponse.json({
     ok: true,
     authorization_url: json.data?.authorization_url,
     access_code: json.data?.access_code,
-    reference: json.data?.reference,
+    reference,
   });
 }
 

@@ -782,27 +782,29 @@ export default function CheckoutForm() {
         </div>
       </div>
 
-      <div className="mt-10">
-        <p className="text-sm font-semibold text-white">Shipping method</p>
-        <div className="mt-3 space-y-3">
-          <RadioRow
-            name="shipping"
-            checked={shippingMethod === "lagos"}
-            onChange={() => setShippingMethod("lagos")}
-            title="Delivery within LAGOS"
-            subtitle="Delivery within 7 to 14 Days"
-            rightSlot={formatNaira(5000)}
-          />
-          <RadioRow
-            name="shipping"
-            checked={shippingMethod === "outside"}
-            onChange={() => setShippingMethod("outside")}
-            title="Delivery outside LAGOS"
-            subtitle="Delivery within 7 to 14 Days"
-            rightSlot={formatNaira(7000)}
-          />
+      {deliveryMode === "ship" ? (
+        <div className="mt-10">
+          <p className="text-sm font-semibold text-white">Shipping method</p>
+          <div className="mt-3 space-y-3">
+            <RadioRow
+              name="shipping"
+              checked={shippingMethod === "lagos"}
+              onChange={() => setShippingMethod("lagos")}
+              title="Delivery within LAGOS"
+              subtitle="Delivery within 7 to 14 Days"
+              rightSlot={formatNaira(5000)}
+            />
+            <RadioRow
+              name="shipping"
+              checked={shippingMethod === "outside"}
+              onChange={() => setShippingMethod("outside")}
+              title="Delivery outside LAGOS"
+              subtitle="Delivery within 7 to 14 Days"
+              rightSlot={formatNaira(7000)}
+            />
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="mt-10">
         <SectionTitle>Payment</SectionTitle>

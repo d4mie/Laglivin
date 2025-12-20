@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
+import { upsertOrder } from "../../../../lib/ordersRepo";
 
 export const runtime = "nodejs";
 
@@ -23,6 +24,19 @@ export async function POST(req) {
   // IMPORTANT: In a real app, persist this event to your DB and fulfill idempotently.
   const event = JSON.parse(rawBody);
   console.log("Paystack webhook:", event?.event, event?.data?.reference);
+
+  const reference = event?.data?.reference;
+  if (reference) {
+    await upsertOrder(reference, {
+      reference,
+      webhookLastEvent: event?.event,
+      webhookLastReceivedAt: new Date().toISOString(),
+      status:
+        event?.event === "charge.success"
+          ? "success"
+          : event?.data?.status || "webhook_received",
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }
