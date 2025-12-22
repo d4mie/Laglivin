@@ -36,19 +36,6 @@ export const products = [
       "A limited artwork print with strong visual presence—built for collectors who want Lagos energy on their walls.",
   },
   {
-    slug: "collab-primeries-notesphere-laglivin-tee",
-    image: "/COLLAB PRIMERIES X NOTESPHERE X LAGLIVIN TEE Back.png",
-    hoverImage: "/COLLAB PRIMERIES X NOTESPHERE X LAGLIVIN TEE front.png",
-    title: "Collab Primeries x Notesphere x Laglivin Tee",
-    price: "₦40,000",
-    tag: "Limited",
-    description: "A collaboration tee made for everyday Lagos motion.",
-    descriptionMore:
-      "Designed to feel effortless—clean branding, bold attitude, and a fit that works from day plans to late links.",
-    details:
-      "Collaboration tee featuring front + back artwork. Limited run while stock lasts.",
-  },
-  {
     slug: "laglivin-sticker-pack-vol-1",
     image: "/Sticker pack vol1.png",
     title: "Laglivin Sticker Pack vol.1",
@@ -59,42 +46,6 @@ export const products = [
       "For laptops, notebooks, cases, and anything you want to mark as yours—small details, big identity.",
     details:
       "Sticker pack (Vol. 1). Durable, high-quality stickers curated in the Laglivin style.",
-  },
-  {
-    slug: "byob-posters",
-    image: "/BYOB posters.png",
-    title: "B.Y.O.B Posters",
-    price: "₦15,000",
-    tag: "",
-    description: "Bring-your-own-bold: a poster set with Lagos attitude.",
-    descriptionMore:
-      "Made to live loud—statement pieces that add edge to studios, bedrooms, and creative spaces.",
-    details:
-      "Poster print(s) designed by Laglivin. Limited availability.",
-  },
-  {
-    slug: "pixel-laglivin-poster",
-    image: "/Pixel Laglivin poster.png",
-    title: "Pixel Laglivin Poster",
-    price: "₦20,000",
-    tag: "New",
-    description: "A pixel-inspired Laglivin poster with a modern finish.",
-    descriptionMore:
-      "A digital feel with physical presence—clean composition, bold type, and an unmistakable Laglivin stamp.",
-    details:
-      "Premium poster print. Designed to pop in frames and on walls.",
-  },
-  {
-    slug: "main-event-poster-byob-laglivin",
-    image: "/Main event poster.png",
-    title: "Main Event Poster BYOB by Laglivin",
-    price: "₦12,000",
-    tag: "",
-    description: "The main event poster—BYOB by Laglivin.",
-    descriptionMore:
-      "A collectible piece that captures the energy of the night—built for fans, collectors, and anyone who was there (or wishes they were).",
-    details:
-      "Event poster print. Limited run while stock lasts.",
   },
 ];
 
