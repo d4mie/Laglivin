@@ -17,6 +17,11 @@ export const products = [
     title: "Life After Midnight",
     price: "₦149,000",
     tag: "Limited",
+    description: "Lagos Living inspired artwork.",
+    descriptionMore:
+      "A quiet moment after the noise—stillness, reflection, and the soft glow that lingers when the city finally exhales.",
+    details:
+      "A limited artwork print created to hold space for late-night Lagos moods—minimal, bold, and designed to live beautifully in any room.",
   },
   {
     slug: "gloves-art-work",
@@ -24,6 +29,11 @@ export const products = [
     title: "House Always Wins",
     price: "₦149,000",
     tag: "Limited",
+    description: "Lagos Living inspired artwork.",
+    descriptionMore:
+      "A reminder that the city has its own rules—movement, grit, and the wins that come from showing up again and again.",
+    details:
+      "A limited artwork print with strong visual presence—built for collectors who want Lagos energy on their walls.",
   },
   {
     slug: "collab-primeries-notesphere-laglivin-tee",
@@ -32,6 +42,11 @@ export const products = [
     title: "Collab Primeries x Notesphere x Laglivin Tee",
     price: "₦40,000",
     tag: "Limited",
+    description: "A collaboration tee made for everyday Lagos motion.",
+    descriptionMore:
+      "Designed to feel effortless—clean branding, bold attitude, and a fit that works from day plans to late links.",
+    details:
+      "Collaboration tee featuring front + back artwork. Limited run while stock lasts.",
   },
   {
     slug: "laglivin-sticker-pack-vol-1",
@@ -39,6 +54,11 @@ export const products = [
     title: "Laglivin Sticker Pack vol.1",
     price: "₦8,000",
     tag: "",
+    description: "A set of Laglivin stickers to tag your world.",
+    descriptionMore:
+      "For laptops, notebooks, cases, and anything you want to mark as yours—small details, big identity.",
+    details:
+      "Sticker pack (Vol. 1). Durable, high-quality stickers curated in the Laglivin style.",
   },
   {
     slug: "byob-posters",
@@ -46,6 +66,11 @@ export const products = [
     title: "B.Y.O.B Posters",
     price: "₦15,000",
     tag: "",
+    description: "Bring-your-own-bold: a poster set with Lagos attitude.",
+    descriptionMore:
+      "Made to live loud—statement pieces that add edge to studios, bedrooms, and creative spaces.",
+    details:
+      "Poster print(s) designed by Laglivin. Limited availability.",
   },
   {
     slug: "pixel-laglivin-poster",
@@ -53,6 +78,11 @@ export const products = [
     title: "Pixel Laglivin Poster",
     price: "₦20,000",
     tag: "New",
+    description: "A pixel-inspired Laglivin poster with a modern finish.",
+    descriptionMore:
+      "A digital feel with physical presence—clean composition, bold type, and an unmistakable Laglivin stamp.",
+    details:
+      "Premium poster print. Designed to pop in frames and on walls.",
   },
   {
     slug: "main-event-poster-byob-laglivin",
@@ -60,6 +90,11 @@ export const products = [
     title: "Main Event Poster BYOB by Laglivin",
     price: "₦12,000",
     tag: "",
+    description: "The main event poster—BYOB by Laglivin.",
+    descriptionMore:
+      "A collectible piece that captures the energy of the night—built for fans, collectors, and anyone who was there (or wishes they were).",
+    details:
+      "Event poster print. Limited run while stock lasts.",
   },
 ];
 
