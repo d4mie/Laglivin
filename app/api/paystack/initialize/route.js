@@ -59,20 +59,33 @@ export async function POST(req) {
     );
   }
 
-  const res = await fetch("https://api.paystack.co/transaction/initialize", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${secret}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      amount: Math.round(amountKobo),
-      currency: "NGN",
-      callback_url,
-      metadata,
-    }),
-  });
+  let res;
+  try {
+    res = await fetch("https://api.paystack.co/transaction/initialize", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${secret}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        amount: Math.round(amountKobo),
+        currency: "NGN",
+        callback_url,
+        metadata,
+      }),
+    });
+  } catch (e) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Unable to reach Paystack. Check your internet connection or try again.",
+        details: `${e?.message || e}`,
+      },
+      { status: 502 }
+    );
+  }
 
   const json = await res.json().catch(() => null);
 
@@ -91,15 +104,20 @@ export async function POST(req) {
 
   const reference = json.data?.reference;
   if (reference) {
-    await upsertOrder(reference, {
-      reference,
-      status: "initialized",
-      createdAt: new Date().toISOString(),
-      email,
-      amountKobo: Math.round(amountKobo),
-      currency: "NGN",
-      metadata,
-    });
+    try {
+      await upsertOrder(reference, {
+        reference,
+        status: "initialized",
+        createdAt: new Date().toISOString(),
+        email,
+        amountKobo: Math.round(amountKobo),
+        currency: "NGN",
+        metadata,
+      });
+    } catch (e) {
+      // Don't block payment if order persistence fails (env/db not configured yet).
+      console.error("Order persistence failed:", e);
+    }
   }
 
   return NextResponse.json({

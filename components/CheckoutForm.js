@@ -426,61 +426,69 @@ export default function CheckoutForm() {
     setIsPaying(true);
     try {
       const amountKobo = Math.round(totalNaira * 100);
-      const res = await fetch("/api/paystack/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          amountKobo,
-          metadata: {
-            cart: items.map((i) => ({
-              slug: i.slug,
-              title: i.title,
-              price: i.price,
-              quantity: i.quantity,
-            })),
-            shipping: {
-              mode: deliveryMode,
-              method: deliveryMode === "ship" ? shippingMethod : "pickup",
-              shippingCostNaira: shippingCost,
+      let res;
+      try {
+        res = await fetch("/api/paystack/initialize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            amountKobo,
+            metadata: {
+              cart: items.map((i) => ({
+                slug: i.slug,
+                title: i.title,
+                price: i.price,
+                quantity: i.quantity,
+              })),
+              shipping: {
+                mode: deliveryMode,
+                method: deliveryMode === "ship" ? shippingMethod : "pickup",
+                shippingCostNaira: shippingCost,
+              },
+              contact: {
+                country,
+                firstName,
+                lastName,
+                company,
+                address,
+                apartment,
+                city,
+                stateRegion,
+                postalCode,
+                phone,
+              },
+              billing: billingSameAsShipping
+                ? { sameAsShipping: true }
+                : {
+                    sameAsShipping: false,
+                    country: billingCountry,
+                    firstName: billingFirstName,
+                    lastName: billingLastName,
+                    company: billingCompany,
+                    address: billingAddress,
+                    apartment: billingApartment,
+                    city: billingCity,
+                    stateRegion: billingStateRegion,
+                    postalCode: billingPostalCode,
+                    phone: billingPhone,
+                  },
+              totals: {
+                subtotalNaira,
+                shippingCostNaira: shippingCost,
+                totalNaira,
+                currency: "NGN",
+              },
             },
-            contact: {
-              country,
-              firstName,
-              lastName,
-              company,
-              address,
-              apartment,
-              city,
-              stateRegion,
-              postalCode,
-              phone,
-            },
-            billing: billingSameAsShipping
-              ? { sameAsShipping: true }
-              : {
-                  sameAsShipping: false,
-                  country: billingCountry,
-                  firstName: billingFirstName,
-                  lastName: billingLastName,
-                  company: billingCompany,
-                  address: billingAddress,
-                  apartment: billingApartment,
-                  city: billingCity,
-                  stateRegion: billingStateRegion,
-                  postalCode: billingPostalCode,
-                  phone: billingPhone,
-                },
-            totals: {
-              subtotalNaira,
-              shippingCostNaira: shippingCost,
-              totalNaira,
-              currency: "NGN",
-            },
-          },
-        }),
-      });
-      const json = await res.json();
+          }),
+        });
+      } catch (e) {
+        throw new Error(
+          "Cannot reach the payment server. If you're on localhost, ensure `npm run dev` is running. If you're on Vercel, check your deployment logs/env vars."
+        );
+      }
+
+      const json = await res.json().catch(() => null);
       if (!res.ok || !json?.ok || !json?.authorization_url) {
         throw new Error(json?.error || "Unable to start payment. Try again.");
       }
