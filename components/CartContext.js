@@ -7,30 +7,16 @@ const CartContext = createContext(null);
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
+    // Ensure cart resets on refresh (no persistence).
     try {
-      const raw = window.localStorage.getItem("laglivin_cart_v1");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setItems(parsed);
-      }
+      window.localStorage.removeItem("laglivin_cart_v1");
     } catch {
       // ignore
-    } finally {
-      setHasHydrated(true);
     }
+    setItems([]);
   }, []);
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-    try {
-      window.localStorage.setItem("laglivin_cart_v1", JSON.stringify(items));
-    } catch {
-      // ignore
-    }
-  }, [items, hasHydrated]);
 
   const addItem = (product, quantity = 1) => {
     const qty = Math.max(1, quantity);

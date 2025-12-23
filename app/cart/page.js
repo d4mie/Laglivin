@@ -4,7 +4,7 @@ import Watermark from "../../components/Watermark";
 import CartPage from "../../components/CartPage";
 
 export const metadata = {
-  title: "Cart • Laglivin Store",
+  title: "Cart • Laglivin",
 };
 
 export default function Cart() {

@@ -4,7 +4,7 @@ import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 
 export const metadata = {
-  title: "Checkout • Laglivin Store",
+  title: "Checkout • Laglivin",
 };
 
 export default function CheckoutPage() {

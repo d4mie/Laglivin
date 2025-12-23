@@ -9,8 +9,19 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Laglivin Store",
-  description: "Laglivin — Volume 2: In the Making. A curated magazine experience.",
+  title: "Laglivin",
+  description: "No Labels",
+  openGraph: {
+    title: "No Labels",
+    description: "No Labels",
+    siteName: "No Labels",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "No Labels",
+    description: "No Labels",
+  },
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
