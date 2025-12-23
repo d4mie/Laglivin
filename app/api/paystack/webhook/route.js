@@ -27,15 +27,20 @@ export async function POST(req) {
 
   const reference = event?.data?.reference;
   if (reference) {
-    await upsertOrder(reference, {
-      reference,
-      webhookLastEvent: event?.event,
-      webhookLastReceivedAt: new Date().toISOString(),
-      status:
-        event?.event === "charge.success"
-          ? "success"
-          : event?.data?.status || "webhook_received",
-    });
+    try {
+      await upsertOrder(reference, {
+        reference,
+        webhookLastEvent: event?.event,
+        webhookLastReceivedAt: new Date().toISOString(),
+        status:
+          event?.event === "charge.success"
+            ? "success"
+            : event?.data?.status || "webhook_received",
+      });
+    } catch (e) {
+      // Don't fail webhook delivery just because persistence isn't configured yet.
+      console.error("Order persistence failed during webhook:", e);
+    }
   }
 
   return NextResponse.json({ ok: true });

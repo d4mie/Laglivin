@@ -20,17 +20,30 @@ export async function GET(req) {
   const reference = (searchParams.get("reference") || "").trim();
   if (!reference) return badRequest("reference is required");
 
-  const res = await fetch(
-    `https://api.paystack.co/transaction/verify/${encodeURIComponent(
-      reference
-    )}`,
-    {
-      headers: {
-        Authorization: `Bearer ${secret}`,
+  let res;
+  try {
+    res = await fetch(
+      `https://api.paystack.co/transaction/verify/${encodeURIComponent(
+        reference
+      )}`,
+      {
+        headers: {
+          Authorization: `Bearer ${secret}`,
+        },
+        cache: "no-store",
+      }
+    );
+  } catch (e) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Unable to reach Paystack to verify this payment. Try again in a moment.",
+        details: `${e?.message || e}`,
       },
-      cache: "no-store",
-    }
-  );
+      { status: 502 }
+    );
+  }
 
   const json = await res.json().catch(() => null);
 
@@ -47,12 +60,17 @@ export async function GET(req) {
   }
 
   // Paystack: data.status can be 'success', 'failed', 'abandoned'
-  await upsertOrder(reference, {
-    reference,
-    status: json.data?.status || "verified",
-    verifiedAt: new Date().toISOString(),
-    paystack: json.data,
-  });
+  try {
+    await upsertOrder(reference, {
+      reference,
+      status: json.data?.status || "verified",
+      verifiedAt: new Date().toISOString(),
+      paystack: json.data,
+    });
+  } catch (e) {
+    // Don't block verification if persistence fails (DB/env not configured yet).
+    console.error("Order persistence failed during verify:", e);
+  }
 
   return NextResponse.json({ ok: true, data: json.data });
 }

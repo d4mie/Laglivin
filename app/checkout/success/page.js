@@ -5,15 +5,27 @@ async function verify(reference) {
   const h = await headers();
   const host = h.get("host");
   const proto = h.get("x-forwarded-proto") || "http";
-  const baseUrl = host ? `${proto}://${host}` : "";
+  const baseUrl =
+    host
+      ? `${proto}://${host}`
+      : process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || "";
 
-  const res = await fetch(
-    `${baseUrl}/api/paystack/verify?reference=${encodeURIComponent(
-      reference
-    )}`,
-    { cache: "no-store" }
-  );
-  return res.json().catch(() => ({ ok: false }));
+  try {
+    const res = await fetch(
+      `${baseUrl}/api/paystack/verify?reference=${encodeURIComponent(
+        reference
+      )}`,
+      { cache: "no-store" }
+    );
+    const json = await res.json().catch(() => null);
+    return json || { ok: false, error: "Unable to read verification response." };
+  } catch (e) {
+    return {
+      ok: false,
+      error: "Unable to call verification endpoint.",
+      details: `${e?.message || e}`,
+    };
+  }
 }
 
 export default async function CheckoutSuccessPage({ searchParams }) {
