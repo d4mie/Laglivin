@@ -24,10 +24,10 @@ export const metadata = {
     }
   })(),
   title: "Laglivin",
-  description: "Our curated gallery for you💛",
+  description: "Our curated gallery for you 💛",
   openGraph: {
     title: "Laglivin - No Labels.",
-    description: "Our curated gallery for you💛",
+    description: "Our curated gallery for you 💛",
     siteName: "Laglivin",
     type: "website",
     images: [
@@ -42,7 +42,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Laglivin - No Labels.",
-    description: "Our curated gallery for you💛",
+    description: "Our curated gallery for you 💛",
     images: ["/share-logo.png"],
   },
   icons: {
