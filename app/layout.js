@@ -20,7 +20,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "No Labels",
-    description: "No Labels",
+    description: "Our curated gallery for you 💛",
   },
   icons: {
     icon: "/logo.png",
