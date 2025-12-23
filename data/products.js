@@ -52,7 +52,7 @@ export const products = [
     slug: "laglivin-sticker-pack-vol-1",
     image: "/Sticker pack vol1.png",
     title: "Laglivin Sticker Pack vol.1",
-    price: "₦8,000",
+    price: "₦100",
     tag: "",
     description: "A set of Laglivin stickers to tag your world.",
     descriptionMore:
