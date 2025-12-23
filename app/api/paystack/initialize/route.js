@@ -7,6 +7,17 @@ function badRequest(message) {
   return NextResponse.json({ ok: false, error: message }, { status: 400 });
 }
 
+function normalizeSiteUrl(raw) {
+  const value = String(raw || "").trim();
+  if (!value) return "";
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  // If user provided host without scheme, guess based on localhost vs public host.
+  if (value.includes("localhost") || value.includes("127.0.0.1")) {
+    return `http://${value}`;
+  }
+  return `https://${value}`;
+}
+
 export async function POST(req) {
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!secret) {
@@ -31,12 +42,22 @@ export async function POST(req) {
   if (!Number.isFinite(amountKobo) || amountKobo < 100)
     return badRequest("amountKobo must be a number >= 100");
 
-  const origin =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    req.headers.get("origin") ||
-    "http://localhost:3000";
-  const callback_url = `${origin}/checkout/success`;
+  const originRaw =
+    process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || req.headers.get("origin") || "";
+  const origin = normalizeSiteUrl(originRaw) || "http://localhost:3000";
+  const callback_url = `${origin.replace(/\/+$/, "")}/checkout/success`;
+
+  // Paystack live payments should use a real public https URL (not localhost).
+  if (
+    secret.startsWith("sk_live") &&
+    (callback_url.startsWith("http://") ||
+      callback_url.includes("localhost") ||
+      callback_url.includes("127.0.0.1"))
+  ) {
+    return badRequest(
+      "You are using a LIVE Paystack key on a non-https/localhost callback URL. Use a TEST key for local dev, or set NEXT_PUBLIC_SITE_URL to your live https domain (e.g. https://laglivin.com)."
+    );
+  }
 
   const res = await fetch("https://api.paystack.co/transaction/initialize", {
     method: "POST",

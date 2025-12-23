@@ -13,7 +13,7 @@ export const metadata = {
   description: "No Labels",
   openGraph: {
     title: "No Labels",
-    description: "No Labels",
+    description: "Our curated gallery for you 💛",
     siteName: "No Labels",
     type: "website",
   },

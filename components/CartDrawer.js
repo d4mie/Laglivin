@@ -151,13 +151,13 @@ export default function CartDrawer() {
             <span>{formatPriceNaira(subtotal)}</span>
           </div>
           {isEmpty ? (
-            <button
+          <button
               className="mt-4 w-full cursor-not-allowed rounded-full bg-white/10 px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/60"
-              type="button"
+            type="button"
               disabled
-            >
+          >
               Cart is empty
-            </button>
+          </button>
           ) : (
             <Link
               href="/checkout"

@@ -50,7 +50,7 @@ export default function ProductDetail({ product }) {
               className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70 underline decoration-white/30 decoration-1 underline-offset-4 hover:text-white"
             >
               {isExpanded ? "Read Less" : "Read More"}
-            </button>
+          </button>
           ) : null}
         </div>
 
