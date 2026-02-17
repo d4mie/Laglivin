@@ -4,6 +4,8 @@ import Footer from "../../../components/Footer";
 import Watermark from "../../../components/Watermark";
 import { getPostBySlug } from "../../../lib/blogRepo";
 
+export const dynamic = "force-dynamic";
+
 export default async function BlogPostPage({ params }) {
   const post = await getPostBySlug(params.slug);
   if (!post || !post.published) return notFound();

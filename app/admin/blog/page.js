@@ -8,6 +8,8 @@ export const metadata = {
   title: "Blog • Admin",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminBlogPage() {
   const posts = await listPosts({ includeUnpublished: true, limit: 200 });
 

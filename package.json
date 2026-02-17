@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
     "@tiptap/extension-image": "^2.27.2",
     "@tiptap/extension-link": "^2.11.2",
     "@tiptap/extension-placeholder": "^2.11.2",
