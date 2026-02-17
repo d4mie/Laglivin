@@ -43,6 +43,66 @@ const NIGERIA_STATES = [
   "Zamfara",
 ];
 
+const US_STATES = [
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "District of Columbia",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+];
+
+function getStateOptions(country) {
+  if (country === "Nigeria") return NIGERIA_STATES;
+  if (country === "United States") return US_STATES;
+  return [];
+}
+
 function formatNaira(value) {
   const amount = Number(value);
   if (Number.isNaN(amount)) return `${value}`;
@@ -265,6 +325,28 @@ export default function CheckoutForm() {
   const phoneHelpBtnRef = useRef(null);
   const billingPhoneHelpBtnRef = useRef(null);
   const pointerPosRef = useRef({ x: -1, y: -1 });
+
+  const shippingStateOptions = useMemo(() => getStateOptions(country), [country]);
+  const billingStateOptions = useMemo(
+    () => getStateOptions(billingCountry),
+    [billingCountry]
+  );
+
+  useEffect(() => {
+    if (!shippingStateOptions.length) return;
+    setStateRegion((prev) => {
+      if (shippingStateOptions.includes(prev)) return prev;
+      return country === "Nigeria" ? "Lagos" : "";
+    });
+  }, [country, shippingStateOptions]);
+
+  useEffect(() => {
+    if (!billingStateOptions.length) return;
+    setBillingStateRegion((prev) => {
+      if (billingStateOptions.includes(prev)) return prev;
+      return billingCountry === "Nigeria" ? "Lagos" : "";
+    });
+  }, [billingCountry, billingStateOptions]);
 
   const subtotalNaira = useMemo(() => {
     return items.reduce(
@@ -744,18 +826,31 @@ export default function CheckoutForm() {
               onChange={(e) => setCity(e.target.value)}
               required
             />
-            <SelectField
-              label="State"
-              value={stateRegion}
-              onChange={(e) => setStateRegion(e.target.value)}
-              required
-            >
-              {NIGERIA_STATES.map((st) => (
-                <option key={st} value={st}>
-                  {st}
+            {shippingStateOptions.length ? (
+              <SelectField
+                label="State"
+                value={stateRegion}
+                onChange={(e) => setStateRegion(e.target.value)}
+                required
+              >
+                <option value="" disabled>
+                  Select state
                 </option>
-              ))}
-            </SelectField>
+                {shippingStateOptions.map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </SelectField>
+            ) : (
+              <Input
+                label="State/Region"
+                placeholder="State/Region"
+                value={stateRegion}
+                onChange={(e) => setStateRegion(e.target.value)}
+                required
+              />
+            )}
             <Input
               label="Postal code (optional)"
               placeholder="Postal code (optional)"
@@ -916,18 +1011,31 @@ export default function CheckoutForm() {
                 onChange={(e) => setBillingCity(e.target.value)}
                 required
               />
-              <SelectField
-                label="Billing state"
-                value={billingStateRegion}
-                onChange={(e) => setBillingStateRegion(e.target.value)}
-                required
-              >
-                {NIGERIA_STATES.map((st) => (
-                  <option key={st} value={st}>
-                    {st}
+              {billingStateOptions.length ? (
+                <SelectField
+                  label="Billing state"
+                  value={billingStateRegion}
+                  onChange={(e) => setBillingStateRegion(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>
+                    Select state
                   </option>
-                ))}
-              </SelectField>
+                  {billingStateOptions.map((st) => (
+                    <option key={st} value={st}>
+                      {st}
+                    </option>
+                  ))}
+                </SelectField>
+              ) : (
+                <Input
+                  label="Billing state/region"
+                  placeholder="State/Region"
+                  value={billingStateRegion}
+                  onChange={(e) => setBillingStateRegion(e.target.value)}
+                  required
+                />
+              )}
               <Input
                 label="Billing postal code (optional)"
                 placeholder="Postal code (optional)"
