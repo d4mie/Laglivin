@@ -14,11 +14,11 @@ export default async function ArticlePage({ params }) {
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black text-white">
-      <Watermark className="opacity-20" lines={40} />
+      <Watermark className="fixed inset-0 z-0 opacity-10" lines={40} />
       <NavBar />
       <div className="pt-16" />
 
-      <article className="mx-auto w-full max-w-3xl px-6 py-12">
+      <article className="relative z-10 mx-auto w-full max-w-3xl px-6 py-12">
         <p className="text-xs uppercase tracking-[0.18em] text-white/50">
           {post?.date ? new Date(post.date).toLocaleDateString() : ""}
         </p>
