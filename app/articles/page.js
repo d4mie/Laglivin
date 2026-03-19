@@ -1,14 +1,23 @@
-import Link from "next/link";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 import Watermark from "../../components/Watermark";
+import Link from "next/link";
+import { listWpPosts, stripHtml } from "../../lib/wordpress";
 
 export const metadata = {
   title: "Articles • Laglivin",
 };
 
-export default function ArticlesPage() {
-  const wpUrl = "https://folahanmionajoko-msihv.wordpress.com/";
+export const dynamic = "force-dynamic";
+
+export default async function ArticlesPage() {
+  let posts = [];
+  let error = "";
+  try {
+    posts = await listWpPosts({ perPage: 20, page: 1 });
+  } catch (e) {
+    error = e?.message || "Unable to load articles right now.";
+  }
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black text-white">
@@ -21,35 +30,63 @@ export default function ArticlesPage() {
           <div>
             <h1 className="text-2xl font-semibold">Articles</h1>
             <p className="mt-2 text-sm text-white/60">
-              Embedded from WordPress.
+              Published on WordPress. Rendered natively on Laglivin.
             </p>
           </div>
-          <Link
-            href={wpUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:border-white/25"
-          >
-            Open in new tab
-          </Link>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black">
-          <iframe
-            title="Laglivin Articles (WordPress)"
-            src={wpUrl}
-            className="h-[80vh] w-full"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
+        {error ? (
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-red-200">
+            {error}
+          </div>
+        ) : null}
 
-        <p className="mt-4 text-xs text-white/50">
-          If the embed shows a blank page or redirects back to Laglivin, WordPress
-          is likely redirecting your domain or blocking iframes. In that case,
-          use a separate blog domain/subdomain (e.g. <span className="text-white">blog.laglivin.com</span>)
-          or switch to WordPress as a headless CMS.
-        </p>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((p) => {
+            const featured = p?.jetpack_featured_media_url || "";
+            const title = p?.title?.rendered || "Untitled";
+            const excerpt = stripHtml(p?.excerpt?.rendered || "");
+            return (
+              <Link
+                key={p.id}
+                href={`/articles/${p.slug}`}
+                className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition hover:border-white/20"
+              >
+                <div className="relative h-52 overflow-hidden bg-black/30">
+                  {featured ? (
+                    <img
+                      src={featured}
+                      alt={stripHtml(title)}
+                      className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-white/5" />
+                  )}
+                </div>
+                <div className="p-5">
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/50">
+                    {p?.date ? new Date(p.date).toLocaleDateString() : ""}
+                  </p>
+                  <h2
+                    className="mt-2 text-lg font-semibold text-white"
+                    dangerouslySetInnerHTML={{ __html: title }}
+                  />
+                  {excerpt ? (
+                    <p className="mt-2 text-sm text-white/70 line-clamp-3">
+                      {excerpt}
+                    </p>
+                  ) : null}
+                </div>
+              </Link>
+            );
+          })}
+
+          {posts.length === 0 && !error ? (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-white/70">
+              No articles yet.
+            </div>
+          ) : null}
+        </div>
       </section>
 
       <Footer />
