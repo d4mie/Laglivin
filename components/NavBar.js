@@ -19,6 +19,21 @@ export default function NavBar() {
           />
         </Link>
 
+        <div className="hidden items-center gap-6 sm:flex">
+          <Link
+            href="/articles"
+            className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300 transition hover:text-white"
+          >
+            Articles
+          </Link>
+          <Link
+            href="/about"
+            className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300 transition hover:text-white"
+          >
+            About
+          </Link>
+        </div>
+
         <button
           className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-white transition hover:opacity-80"
           aria-label="Open cart"
