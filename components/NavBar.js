@@ -19,35 +19,35 @@ export default function NavBar() {
           />
         </Link>
 
-        <div className="hidden items-center gap-6 sm:flex">
+        <div className="flex items-center gap-4 sm:gap-6">
           <Link
             href="/articles"
-            className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300 transition hover:text-white"
+            className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-300 transition hover:text-white"
           >
             Articles
           </Link>
           <Link
             href="/about"
-            className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-300 transition hover:text-white"
+            className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-300 transition hover:text-white"
           >
             About
           </Link>
-        </div>
 
-        <button
-          className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-white transition hover:opacity-80"
-          aria-label="Open cart"
-          onClick={toggleCart}
-        >
-          <img
-            src="/cart.png"
-            alt="Cart icon"
-            className="h-6 w-6 object-contain sm:h-7 sm:w-7"
-          />
-          <span className="flex h-5 min-w-[20px] items-center justify-center text-[11px] font-semibold text-amber-400">
-            {totalCount}
-          </span>
-        </button>
+          <button
+            className="flex items-center gap-2 px-2 py-2 text-sm font-semibold text-white transition hover:opacity-80"
+            aria-label="Open cart"
+            onClick={toggleCart}
+          >
+            <img
+              src="/cart.png"
+              alt="Cart icon"
+              className="h-6 w-6 object-contain sm:h-7 sm:w-7"
+            />
+            <span className="flex h-5 min-w-[20px] items-center justify-center text-[11px] font-semibold text-amber-400">
+              {totalCount}
+            </span>
+          </button>
+        </div>
       </nav>
     </header>
   );

@@ -1,5 +1,4 @@
 import Watermark from "./Watermark";
-import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -16,15 +15,6 @@ export default function Hero() {
             alt="Laglivin cover"
             className="block h-[70vh] w-auto max-w-[520px] object-cover"
           />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            href="/articles"
-            className="rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black transition hover:bg-amber-300"
-          >
-            Articles
-          </Link>
         </div>
       </div>
     </section>
