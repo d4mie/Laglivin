@@ -15,7 +15,7 @@ export default async function ArticlePage({ params }) {
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black text-white">
-      <Watermark className="fixed inset-0 z-0 opacity-10" lines={0} />
+      <Watermark className="fixed inset-0 z-0 opacity-10" lines={40} />
       <NavBar />
       <div className="pt-16" />
 

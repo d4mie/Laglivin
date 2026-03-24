@@ -10,7 +10,7 @@ export default function Home() {
       <NavBar />
       <Hero />
       <ProductGrid products={products} />
-      <Footer watermarkLines={10} />
+      <Footer />
     </main>
   );
 }

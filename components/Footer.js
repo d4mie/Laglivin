@@ -1,6 +1,6 @@
 import Watermark from "./Watermark";
 
-export default function Footer({ watermarkLines = 0 } = {}) {
+export default function Footer() {
   return (
     <footer
       id="footer"
@@ -8,7 +8,7 @@ export default function Footer({ watermarkLines = 0 } = {}) {
       role="contentinfo"
     >
       <div className="relative overflow-hidden border-b border-amber-400 bg-black text-white">
-        <Watermark lines={watermarkLines} />
+        <Watermark />
         <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-14 md:grid-cols-5">
           <div>
             <h4 className="font-semibold uppercase tracking-[0.16em]">
@@ -50,7 +50,7 @@ export default function Footer({ watermarkLines = 0 } = {}) {
       </div>
 
       <div className="relative overflow-hidden bg-black px-6 py-4 text-center text-xs text-neutral-200">
-        <Watermark lines={watermarkLines} />
+        <Watermark />
         Design and Development by{" "}
         <a
           href="https://damilolaogunnaike.com"
