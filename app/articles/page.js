@@ -2,7 +2,7 @@ import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 import Watermark from "../../components/Watermark";
 import Link from "next/link";
-import { listWpPosts, stripHtml } from "../../lib/wordpress";
+import { getWpAuthorName, listWpPosts, stripHtml } from "../../lib/wordpress";
 
 export const metadata = {
   title: "Articles • Laglivin",
@@ -43,6 +43,7 @@ export default async function ArticlesPage() {
             const featured = p?.jetpack_featured_media_url || "";
             const title = p?.title?.rendered || "Untitled";
             const excerpt = stripHtml(p?.excerpt?.rendered || "");
+            const authorName = getWpAuthorName(p);
             return (
               <Link
                 key={p.id}
@@ -61,9 +62,11 @@ export default async function ArticlesPage() {
                   )}
                 </div>
                 <div className="p-5">
-                  <p className="text-xs uppercase tracking-[0.18em] text-white/50">
-                    {p?.date ? new Date(p.date).toLocaleDateString() : ""}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs uppercase tracking-[0.18em] text-white/50">
+                    <span>{p?.date ? new Date(p.date).toLocaleDateString() : ""}</span>
+                    {authorName ? <span>•</span> : null}
+                    {authorName ? <span>By {authorName}</span> : null}
+                  </div>
                   <h2
                     className="mt-2 text-lg font-semibold text-white"
                     dangerouslySetInnerHTML={{ __html: title }}
