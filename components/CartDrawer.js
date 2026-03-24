@@ -47,7 +47,7 @@ export default function CartDrawer() {
         onClick={closeCart}
       />
       <div className="relative ml-auto flex h-full w-full max-w-md flex-col overflow-hidden bg-black text-white shadow-2xl ring-1 ring-white/10">
-        <Watermark className="opacity-15" />
+        <Watermark className="opacity-15" lines={0} />
         <div
           className="relative z-10 flex items-center justify-between border-b border-white/10 px-6 py-4"
         >

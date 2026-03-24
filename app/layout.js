@@ -46,9 +46,9 @@ export const metadata = {
     images: ["/share-logo.png"],
   },
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: "/00000466-Logo%202.png",
+    shortcut: "/00000466-Logo%202.png",
+    apple: "/00000466-Logo%202.png",
   },
 };
 

@@ -14,7 +14,7 @@ export default function ProductPage({ params }) {
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black text-white">
-      <Watermark />
+      <Watermark lines={0} />
       <NavBar />
       <ProductDetail product={product} />
       <Footer />

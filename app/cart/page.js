@@ -10,7 +10,7 @@ export const metadata = {
 export default function Cart() {
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black text-white">
-      <Watermark />
+      <Watermark lines={0} />
       <NavBar />
       <div className="pt-16" />
       <CartPage />
