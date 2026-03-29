@@ -29,19 +29,17 @@ a {
   0% {
     transform: translateX(-40vw);
   }
-  50% {
-    transform: translateX(75vw);
-  }
   100% {
-    transform: translateX(-40vw);
+    transform: translateX(75vw);
   }
 }
 
 .watermark-line {
   animation-name: watermark-sway;
   animation-iteration-count: infinite;
-  animation-direction: alternate;
-  animation-timing-function: ease-in-out;
+  animation-direction: normal;
+  animation-timing-function: linear;
+  will-change: transform;
 }
 
 /* Minimal rich text styling for blog content */

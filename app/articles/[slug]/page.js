@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
-import Watermark from "../../../components/Watermark";
 import { getWpAuthorName, getWpPostBySlug, stripHtml } from "../../../lib/wordpress";
 
 export const dynamic = "force-dynamic";
@@ -15,11 +14,10 @@ export default async function ArticlePage({ params }) {
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black text-white">
-      <Watermark className="fixed inset-0 z-0 opacity-10" lines={40} />
       <NavBar />
       <div className="pt-16" />
 
-      <article className="relative z-10 mx-auto w-full max-w-3xl px-6 py-12">
+      <article className="mx-auto w-full max-w-3xl px-6 py-12">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs uppercase tracking-[0.18em] text-white/50">
           <span>{post?.date ? new Date(post.date).toLocaleDateString() : ""}</span>
           {authorName ? <span>•</span> : null}

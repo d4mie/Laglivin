@@ -1,6 +1,5 @@
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
-import Watermark from "../../components/Watermark";
 import Link from "next/link";
 import { getWpAuthorName, listWpPosts, stripHtml } from "../../lib/wordpress";
 
@@ -21,11 +20,10 @@ export default async function ArticlesPage() {
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-black text-white">
-      <Watermark className="fixed inset-0 z-0 opacity-10" lines={40} />
       <NavBar />
       <div className="pt-16" />
 
-      <section className="relative z-10 mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+      <section className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold">Articles</h1>
