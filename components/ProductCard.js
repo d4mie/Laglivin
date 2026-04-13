@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -58,13 +59,16 @@ export default function ProductCard({
         className="flex h-full flex-col overflow-hidden rounded-2xl"
       >
         <div className="relative h-72 overflow-hidden bg-neutral-100">
-          <img
+          <Image
             src={showAlt && hoverImage ? hoverImage : image}
             alt={title}
-            className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
+            fill
+            quality={80}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover transition duration-700 ease-out group-hover:scale-105"
           />
           {tag ? (
-            <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-700 shadow-sm">
+            <span className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-700 shadow-sm">
               {tag}
             </span>
           ) : null}
