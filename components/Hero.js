@@ -12,7 +12,7 @@ export default function Hero() {
       <div className="relative z-10 flex flex-col items-center gap-10 pt-16">
         <div className="relative h-[70vh] w-auto max-w-[520px] overflow-hidden rounded-lg shadow-2xl ring-4 ring-black/10">
           <Image
-            src="/Laglivin cover.png"
+            src="/Laglivin%20cover.png"
             alt="Laglivin cover"
             width={520}
             height={780}
