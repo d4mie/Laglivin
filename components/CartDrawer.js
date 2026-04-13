@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo } from "react";
 import { useCart } from "./CartContext";
 import Watermark from "./Watermark";
@@ -87,11 +88,13 @@ export default function CartDrawer() {
                 key={item.slug}
                 className="flex gap-4 rounded-xl border border-white/10 bg-white/5 p-3"
               >
-                <div className="h-24 w-24 overflow-hidden rounded-lg bg-white/10 ring-1 ring-white/10">
-                  <img
+                <div className="relative h-24 w-24 overflow-hidden rounded-lg bg-white/10 ring-1 ring-white/10">
+                  <Image
                     src={item.image}
                     alt={item.title}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="96px"
+                    className="object-cover"
                   />
                 </div>
                 <div className="flex flex-1 flex-col gap-2">

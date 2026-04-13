@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import NavBar from "../../../components/NavBar";
 import Footer from "../../../components/Footer";
@@ -29,11 +30,14 @@ export default async function ArticlePage({ params }) {
         />
 
         {post?.jetpack_featured_media_url ? (
-          <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-            <img
+          <div className="relative mt-8 aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+            <Image
               src={post.jetpack_featured_media_url}
               alt={stripHtml(title)}
-              className="w-full object-cover"
+              fill
+              quality={85}
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
             />
           </div>
         ) : null}

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 import Link from "next/link";
@@ -50,10 +51,12 @@ export default async function ArticlesPage() {
               >
                 <div className="relative h-52 overflow-hidden bg-black/30">
                   {featured ? (
-                    <img
+                    <Image
                       src={featured}
                       alt={stripHtml(title)}
-                      className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition duration-700 ease-out group-hover:scale-105"
                     />
                   ) : (
                     <div className="h-full w-full bg-white/5" />
