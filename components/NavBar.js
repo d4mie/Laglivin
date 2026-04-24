@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Watermark from "./Watermark";
 import { useCart } from "./CartContext";
 import Link from "next/link";
@@ -12,9 +13,12 @@ export default function NavBar() {
       <Watermark />
       <nav className="relative z-10 flex h-16 w-full items-center justify-between px-5 sm:px-8 lg:px-12 text-white">
         <Link href="/" className="flex items-center gap-3">
-          <img
+          <Image
             src="/logo.png"
             alt="Lag Livin logo"
+            width={56}
+            height={56}
+            priority
             className="h-12 w-auto object-contain sm:h-14"
           />
         </Link>
@@ -38,9 +42,12 @@ export default function NavBar() {
             aria-label="Open cart"
             onClick={toggleCart}
           >
-            <img
+            <Image
               src="/cart.png"
               alt="Cart icon"
+              width={28}
+              height={28}
+              priority
               className="h-6 w-6 object-contain sm:h-7 sm:w-7"
             />
             <span className="flex h-5 min-w-[20px] items-center justify-center text-[11px] font-semibold text-amber-400">

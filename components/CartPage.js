@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { useCart } from "./CartContext";
@@ -54,11 +55,13 @@ export default function CartPage() {
               key={item.slug}
               className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-4"
             >
-              <div className="h-28 w-28 overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/10">
-                <img
+              <div className="relative h-28 w-28 overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/10">
+                <Image
                   src={item.image}
                   alt={item.title}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="112px"
+                  className="object-cover"
                 />
               </div>
 

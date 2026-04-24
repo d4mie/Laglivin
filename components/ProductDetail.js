@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useCart } from "./CartContext";
 
@@ -65,10 +66,13 @@ export default function ProductDetail({ product }) {
       {/* Center: Image */}
       <div className="my-10 flex justify-center lg:my-0">
         <div className="relative h-72 w-full overflow-hidden rounded-2xl bg-neutral-100 ring-1 ring-white/10">
-          <img
+          <Image
             src={product.image}
             alt={product.title}
-            className="h-full w-full object-contain"
+            fill
+            quality={85}
+            sizes="(max-width: 1024px) 100vw, 33vw"
+            className="object-contain"
           />
         </div>
       </div>
