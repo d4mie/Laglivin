@@ -40,7 +40,7 @@ export const products = [
     image: "/COLLAB PRIMERIES X NOTESPHERE X LAGLIVIN TEE Back.png",
     hoverImage: "/COLLAB PRIMERIES X NOTESPHERE X LAGLIVIN TEE front.png",
     title: "Collab Primeries x Notesphere x Laglivin Tee",
-    price: "₦40,000",
+    price: "₦200",
     tag: "Limited",
     description: "A collaboration tee made for everyday Lagos motion.",
     descriptionMore:
