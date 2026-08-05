@@ -19,6 +19,7 @@ export function CartProvider({ children }) {
   }, []);
 
   const addItem = (product, quantity = 1) => {
+    if (product?.soldOut) return;
     const qty = Math.max(1, quantity);
     setItems((prev) => {
       const existing = prev.find((item) => item.slug === product.slug);
