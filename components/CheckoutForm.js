@@ -302,7 +302,6 @@ export default function CheckoutForm() {
   const [stateRegion, setStateRegion] = useState("Lagos");
   const [postalCode, setPostalCode] = useState("");
   const [phone, setPhone] = useState("");
-  const [shippingMethod, setShippingMethod] = useState("lagos"); // lagos | outside
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
   const [billingCountry, setBillingCountry] = useState("Nigeria");
   const [billingFirstName, setBillingFirstName] = useState("");
@@ -355,11 +354,8 @@ export default function CheckoutForm() {
     );
   }, [items]);
 
-  const shippingCost = useMemo(() => {
-    if (deliveryMode !== "ship") return 0;
-    return shippingMethod === "lagos" ? 5000 : 7000;
-  }, [deliveryMode, shippingMethod]);
-
+  // Delivery fee is paid to the dispatcher on arrival — not charged at checkout.
+  const shippingCost = 0;
   const totalNaira = subtotalNaira + shippingCost;
 
   const missingRequiredFields = useMemo(() => {
@@ -525,7 +521,10 @@ export default function CheckoutForm() {
               })),
               shipping: {
                 mode: deliveryMode,
-                method: deliveryMode === "ship" ? shippingMethod : "pickup",
+                method:
+                  deliveryMode === "ship"
+                    ? "pay_dispatcher_on_delivery"
+                    : "pickup",
                 shippingCostNaira: shippingCost,
               },
               contact: {
@@ -886,25 +885,36 @@ export default function CheckoutForm() {
       </div>
 
       {deliveryMode === "ship" ? (
-        <div className="mt-10">
-          <p className="text-sm font-semibold text-white">Shipping method</p>
-          <div className="mt-3 space-y-3">
-            <RadioRow
-              name="shipping"
-              checked={shippingMethod === "lagos"}
-              onChange={() => setShippingMethod("lagos")}
-              title="Delivery within LAGOS"
-              subtitle="Delivery within 7 to 14 Days"
-              rightSlot={formatNaira(5000)}
-            />
-            <RadioRow
-              name="shipping"
-              checked={shippingMethod === "outside"}
-              onChange={() => setShippingMethod("outside")}
-              title="Delivery outside LAGOS"
-              subtitle="Delivery within 7 to 14 Days"
-              rightSlot={formatNaira(7000)}
-            />
+        <div
+          className="mt-10 rounded-2xl border border-amber-400/40 bg-amber-400/10 px-4 py-4"
+          role="note"
+        >
+          <div className="flex items-start gap-3">
+            <svg
+              aria-hidden="true"
+              className="mt-0.5 shrink-0 text-amber-300"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-amber-200">
+                Pay dispatcher on delivery
+              </p>
+              <p className="mt-1 text-sm text-white/70">
+                Your order total covers products only. Delivery fee is paid
+                directly to the dispatcher when your order arrives.
+              </p>
+            </div>
           </div>
         </div>
       ) : null}
