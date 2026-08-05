@@ -8,11 +8,19 @@ export default function ProductDetail({ product }) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const soldOut = Boolean(product.soldOut);
 
-  const inc = () => setQuantity((q) => Math.min(99, q + 1));
-  const dec = () => setQuantity((q) => Math.max(1, q - 1));
+  const inc = () => {
+    if (soldOut) return;
+    setQuantity((q) => Math.min(99, q + 1));
+  };
+  const dec = () => {
+    if (soldOut) return;
+    setQuantity((q) => Math.max(1, q - 1));
+  };
 
   const handleAdd = () => {
+    if (soldOut) return;
     addItem(product, quantity);
   };
 
@@ -36,7 +44,9 @@ export default function ProductDetail({ product }) {
           <h1 className="text-2xl font-semibold uppercase tracking-[0.12em]">
             {product.title}
           </h1>
-          <p className="text-lg font-semibold text-amber-300">{product.price}</p>
+          <p className="text-lg font-semibold text-amber-300">
+            {soldOut ? "SOLD OUT" : product.price}
+          </p>
         </div>
 
         <div className="space-y-3 text-sm leading-relaxed text-white/80">
@@ -79,37 +89,45 @@ export default function ProductDetail({ product }) {
 
       {/* Right: Purchase */}
       <div className="space-y-8 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-subtle">
-        <div className="space-y-3">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-white/60">
-            Quantity
-          </p>
-          <div className="flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-semibold">
-            <button
-              type="button"
-              onClick={dec}
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 text-base text-white/80 leading-none"
-              aria-label="Decrease quantity"
-            >
-              –
-            </button>
-            <span className="min-w-[24px] text-center">{quantity}</span>
-            <button
-              type="button"
-              onClick={inc}
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-white bg-white text-base text-black leading-none"
-              aria-label="Increase quantity"
-            >
-              +
-            </button>
+        {soldOut ? null : (
+          <div className="space-y-3">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-white/60">
+              Quantity
+            </p>
+            <div className="flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-semibold">
+              <button
+                type="button"
+                onClick={dec}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 text-base text-white/80 leading-none"
+                aria-label="Decrease quantity"
+              >
+                –
+              </button>
+              <span className="min-w-[24px] text-center">{quantity}</span>
+              <button
+                type="button"
+                onClick={inc}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white bg-white text-base text-black leading-none"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <button
           type="button"
           onClick={handleAdd}
-          className="w-full rounded-full bg-white px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.18em] text-black transition hover:bg-amber-300"
+          disabled={soldOut}
+          aria-disabled={soldOut}
+          className={`w-full rounded-full px-6 py-3 text-center text-sm font-semibold uppercase tracking-[0.18em] transition ${
+            soldOut
+              ? "cursor-not-allowed bg-white/15 text-white/50"
+              : "bg-white text-black hover:bg-amber-300"
+          }`}
         >
-          Add to Bag
+          {soldOut ? "SOLD OUT" : "Add to Bag"}
         </button>
       </div>
     </div>

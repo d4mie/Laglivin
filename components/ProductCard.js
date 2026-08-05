@@ -11,6 +11,7 @@ export default function ProductCard({
   title,
   price,
   tag,
+  soldOut = false,
 }) {
   const [showAlt, setShowAlt] = useState(false);
   const cardRef = useRef(null);
@@ -67,9 +68,15 @@ export default function ProductCard({
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover transition duration-700 ease-out group-hover:scale-105"
           />
-          {tag ? (
-            <span className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-700 shadow-sm">
-              {tag}
+          {tag || soldOut ? (
+            <span
+              className={`absolute left-3 top-3 z-10 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] shadow-sm ${
+                soldOut
+                  ? "bg-neutral-900 text-white"
+                  : "bg-white/90 text-neutral-700"
+              }`}
+            >
+              {soldOut ? "SOLD OUT" : tag}
             </span>
           ) : null}
         </div>
@@ -82,7 +89,9 @@ export default function ProductCard({
             {title}
           </h3>
           <div className="mt-auto flex items-center justify-between text-sm font-semibold text-neutral-800">
-            <span>{price}</span>
+            <span className={soldOut ? "text-neutral-500" : undefined}>
+              {soldOut ? "SOLD OUT" : price}
+            </span>
             <span className="text-[13px] font-semibold text-neutral-600 transition group-hover:text-neutral-900">
               View
             </span>
